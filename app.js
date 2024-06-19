@@ -9,8 +9,7 @@ const session = require('express-session');
 const Book = require('./models/Book');
 const fetchNewBooks = require('./scripts/fetchNewBooks');
 const fetchCategories = require('./scripts/fetchCategories');
-const bookRouter = require('./routes/book.api');
-const categoryRouter = require('./routes/category.api');
+const indexRouter = require('./routes/index');
 
 const app = express();
 
@@ -55,8 +54,7 @@ mongoose
       res.send('Hello BookDo7Stars!');
     });
 
-    app.use('/api/book', bookRouter);
-    app.use('/api/category', categoryRouter);
+    app.use('/api/', indexRouter);
 
     // 서버 시작
     app.listen(process.env.PORT || 4000, () => {
