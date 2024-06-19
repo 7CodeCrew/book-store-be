@@ -5,8 +5,9 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const session = require('express-session');
-const Book = require('./models/book');
+const Book = require('./models/Book');
 const fetchNewBooks = require('./scripts/fetchNewBooks');
+const bookRouter = require('./routes/book.api');
 
 const app = express();
 
@@ -38,7 +39,7 @@ mongoose
   .then(async () => {
     console.log('mongoose connected');
 
-    // 데이터베이스에 books Document가 있는 지 확인하고 
+    // 데이터베이스에 books Document가 있는 지 확인하고
     const bookCount = await Book.countDocuments();
     if (bookCount === 0) {
       // 없으면 도서를 불러온다
@@ -48,6 +49,13 @@ mongoose
       // 있으면 도서를 불러오지 않는다.
       console.log('Books already exist in the database. Skipping fetch.');
     }
+
+    app.get('/', (req, res) => {
+      res.send('Hello BookDo7Stars!');
+    });
+
+    app.use('/api/book', bookRouter);
+
     // 서버 시작
     app.listen(process.env.PORT || 4000, () => {
       console.log(`Server is running on port 4000`);
