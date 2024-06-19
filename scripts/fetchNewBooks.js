@@ -5,11 +5,10 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-
 async function fetchNewBooks() {
   let page = 1;
   try {
-// 쿼리 별로 도서 불러오기
+    // 쿼리 별로 도서 불러오기
     await fetchBooks(page, 'ItemNewAll');
     await fetchBooks(page, 'ItemNewSpecial');
     await fetchBooks(page, 'BestSeller');
