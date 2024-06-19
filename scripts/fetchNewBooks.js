@@ -28,7 +28,7 @@ async function fetchBooks(page, queryType) {
   const TTBKEY = process.env.TTBKEY;
   do {
     const response = await axios.get(
-      `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${TTBKEY}&QueryType=${queryType}&MaxResults=50&start=${page}&SearchTarget=Book&output=js&Version=20131101`,
+      `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${TTBKEY}&QueryType=${queryType}&Cover=Big&MaxResults=50&start=${page}&SearchTarget=Book&output=js&Version=20131101`,
     );
     const books = response.data.item;
     totalResults = response.data.totalResults;
