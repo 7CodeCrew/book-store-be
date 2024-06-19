@@ -1,7 +1,8 @@
 const axios = require('axios');
 const mongoose = require('mongoose');
-const Book = require('../models/book');
+const Book = require('../models/Book');
 const dotenv = require('dotenv');
+const Category = require('../models/Category');
 
 dotenv.config();
 
@@ -28,7 +29,7 @@ async function fetchBooks(page, queryType) {
   const TTBKEY = process.env.TTBKEY;
   do {
     const response = await axios.get(
-      `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${TTBKEY}&QueryType=${queryType}&MaxResults=50&start=${page}&SearchTarget=Book&output=js&Version=20131101`,
+      `http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=${TTBKEY}&QueryType=${queryType}&Cover=Big&MaxResults=50&start=${page}&SearchTarget=Book&output=js&Version=20131101`,
     );
     const books = response.data.item;
     totalResults = response.data.totalResults;
@@ -37,6 +38,16 @@ async function fetchBooks(page, queryType) {
     for (const book of books) {
       const newBook = new Book(book);
       await newBook.save();
+
+      const parts = book.categoryName.split('>');
+      const modifiedCategoryName = parts[1];
+      const category = {
+        categoryId: book.categoryId,
+        categoryName: modifiedCategoryName,
+        books: [],
+      };
+      const newCategory = new Category(category);
+      await newCategory.save();
     }
     page += 1;
   } while (page < Math.ceil(totalResults / itemsPerPage));
