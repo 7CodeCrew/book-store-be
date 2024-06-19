@@ -31,6 +31,9 @@ const bookSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    mileage: {
+      type: Number,
+    },
     categoryName: {
       type: String,
     },
@@ -41,7 +44,18 @@ const bookSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    fixedPrice: {
+      type: Boolean,
+      default: false,
+    },
     priceStandard: {
+      type: Number,
+      required: true,
+    },
+    priceSales: {
+      type: Number,
+    },
+    customerReviewRank: {
       type: Number,
       required: true,
     },

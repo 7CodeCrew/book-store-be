@@ -1,5 +1,6 @@
 const express = require('express');
 const axios = require('axios');
+const RandomStringGenerator = require('./scripts/randomStringGenerator');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -7,29 +8,26 @@ const dotenv = require('dotenv');
 const session = require('express-session');
 const Book = require('./models/Book');
 const fetchNewBooks = require('./scripts/fetchNewBooks');
+const fetchCategories = require('./scripts/fetchCategories');
 const bookRouter = require('./routes/book.api');
 
 const app = express();
 
 dotenv.config();
+const COOKIE_SECRET = RandomStringGenerator.generateRandomString();
 
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
+
+app.use(cors());
 
 app.use(
-  cors({
-    origin: ['http://localhost:3000'],
-    credentials: true,
+  session({
+    saveUninitialized: false,
+    resave: false,
+    secret: COOKIE_SECRET,
+    cookie: { secure: true, sameSite: 'none' },
   }),
 );
-
-// app.use(
-//   session({
-//     saveUninitialized: false,
-//     resave: false,
-//     secret: process.env.COOKIE_SECRET,
-//     cookie: { secure: true },
-//   }),
-// );
 
 // 몽고 디비 URI: 프로덕션 환경일 경우 MONGODB_URI_PROD (몽고 아틀라스), 아니면 로컬호스트.
 const MONGODB_URI = process.env.NODE_ENV === 'production' ? process.env.MONGODB_URI_PROD : process.env.MONGODB_URI_DEV;
@@ -49,6 +47,8 @@ mongoose
       // 있으면 도서를 불러오지 않는다.
       console.log('Books already exist in the database. Skipping fetch.');
     }
+
+    await fetchCategories();
 
     app.get('/', (req, res) => {
       res.send('Hello BookDo7Stars!');

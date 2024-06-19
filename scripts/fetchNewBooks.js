@@ -2,6 +2,7 @@ const axios = require('axios');
 const mongoose = require('mongoose');
 const Book = require('../models/Book');
 const dotenv = require('dotenv');
+const Category = require('../models/Category');
 
 dotenv.config();
 
@@ -37,6 +38,16 @@ async function fetchBooks(page, queryType) {
     for (const book of books) {
       const newBook = new Book(book);
       await newBook.save();
+
+      const parts = book.categoryName.split('>');
+      const modifiedCategoryName = parts[1];
+      const category = {
+        categoryId: book.categoryId,
+        categoryName: modifiedCategoryName,
+        books: [],
+      };
+      const newCategory = new Category(category);
+      await newCategory.save();
     }
     page += 1;
   } while (page < Math.ceil(totalResults / itemsPerPage));
