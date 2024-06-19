@@ -29,6 +29,7 @@ bookController.getBooksByCategory = async (req, res) => {
     // 나중에 검색 기능 대비
     const { name } = req.query;
     const cond = name ? { categoryId: categoryId, name: { $regex: name, $options: 'i' } } : { categoryId: categoryId };
+    console.log(cond);
     let query = Category.find(cond).populate({
       path: 'books',
       populate: {

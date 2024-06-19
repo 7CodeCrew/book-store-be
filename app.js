@@ -10,6 +10,7 @@ const Book = require('./models/Book');
 const fetchNewBooks = require('./scripts/fetchNewBooks');
 const fetchCategories = require('./scripts/fetchCategories');
 const bookRouter = require('./routes/book.api');
+const categoryRouter = require('./routes/category.api');
 
 const app = express();
 
@@ -55,6 +56,7 @@ mongoose
     });
 
     app.use('/api/book', bookRouter);
+    app.use('/api/category', categoryRouter);
 
     // 서버 시작
     app.listen(process.env.PORT || 4000, () => {

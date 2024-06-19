@@ -4,6 +4,6 @@ const { getAllBooks, getBooksByCategory } = require('../controller/book.controll
 const router = express.Router();
 
 router.get('/', getAllBooks);
-router.get('/:categoryID', getBooksByCategory);
+router.get('/:categoryId', getBooksByCategory);
 
 module.exports = router;

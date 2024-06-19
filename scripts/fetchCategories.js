@@ -24,8 +24,6 @@ async function fetchCategories() {
 
         category.books = booksByCategory;
         uniqueCategories.push(category);
-
-        console.log(category.books);
       }
     });
 
