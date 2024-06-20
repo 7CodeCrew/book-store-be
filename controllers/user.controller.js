@@ -29,4 +29,20 @@ userController.createUser = async (req, res) => {
   }
 };
 
+userController.getUser = async (req, res) => {
+  try {
+    const { userId } = req;
+    const user = await User.findById(userId);
+    if (user) {
+      return res.status(200).json({ status: "success", user });
+    } else {
+      return res
+        .status(400)
+        .json({ status: "error", error: "Invalid token 실패!!" });
+    }
+  } catch (err) {
+    res.status(400).json({ status: "error", error: err.message });
+  }
+};
+
 module.exports = userController;
