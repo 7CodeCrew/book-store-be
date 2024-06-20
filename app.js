@@ -54,7 +54,7 @@ mongoose
       res.send('Hello BookDo7Stars!');
     });
 
-    app.use('/api/', indexRouter);
+    app.use('/api', indexRouter);
 
     // 서버 시작
     app.listen(process.env.PORT || 4000, () => {
