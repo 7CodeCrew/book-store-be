@@ -7,6 +7,7 @@ userController.createUser = async (req, res) => {
   try {
     let { userName, email, password, role, level, address, phone } = req.body;
     let user = await User.findOne({ email });
+    console.log("유져!!",user)
     if (user) {
       return res.status(400).json({ status: 'fail', error: 'User already exists' });
     }
