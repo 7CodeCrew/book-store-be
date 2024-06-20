@@ -46,5 +46,23 @@ bookController.getBooksByCategory = async (req, res) => {
     res.status(500).json({ message: 'Error by getting book', err });
   }
 };
+bookController.getBooksByQueryType = async (req, res) => {
+  try {
+    const queryType = req.params.queryType;
+    // 나중에 검색 기능 대비
+    const { title, author } = req.query;
+    const condition = { queryType: queryType };
+    if (title) condition.title = { $regex: title, $options: 'i' };
+    if (author) condition.author = { $regex: author, $options: 'i' };
+    const books = await Book.find(condition);
 
+    if (!books) {
+      return res.status(404).json({ message: 'No books are found!' });
+    }
+    return res.status(200).json(books);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error by getting book', err });
+  }
+};
 module.exports = bookController;

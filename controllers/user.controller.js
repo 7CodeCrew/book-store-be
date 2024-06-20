@@ -7,7 +7,7 @@ userController.createUser = async (req, res) => {
   try {
     let { userName, email, password, role, level, address, phone } = req.body;
     let user = await User.findOne({ email });
-    console.log("유져!!",user)
+    console.log('유져!!', user);
     if (user) {
       return res.status(400).json({ status: 'fail', error: 'User already exists' });
     }
@@ -35,14 +35,12 @@ userController.getUser = async (req, res) => {
     const { userId } = req;
     const user = await User.findById(userId);
     if (user) {
-      return res.status(200).json({ status: "success", user });
+      return res.status(200).json({ status: 'success', user });
     } else {
-      return res
-        .status(400)
-        .json({ status: "error", error: "Invalid token 실패!!" });
+      return res.status(400).json({ status: 'error', error: 'Invalid token 실패!!' });
     }
   } catch (err) {
-    res.status(400).json({ status: "error", error: err.message });
+    res.status(400).json({ status: 'error', error: err.message });
   }
 };
 
