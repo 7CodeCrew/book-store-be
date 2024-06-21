@@ -1,10 +1,12 @@
 const express = require('express');
-const { getAllBooks, getBooksByCategory, deleteBook } = require('../controllers/book.controller');
+const { getAllBooks, getBooksByCategory, deleteBook, updateBook, addBook } = require('../controllers/book.controller');
 
 const router = express.Router();
 
 router.get('/', getAllBooks);
-router.get('/:categoryId', getBooksByCategory);
 router.delete('/:id', deleteBook);
+router.put('/:id', updateBook);
+router.post('/', addBook);
+router.get('/:categoryId', getBooksByCategory);
 
 module.exports = router;

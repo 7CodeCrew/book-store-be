@@ -1,5 +1,6 @@
 const Category = require('../models/Category');
 const Book = require('../models/Book');
+
 async function fetchCategories() {
   try {
     // 모든 카테고리 데이터를 조회합니다
@@ -13,13 +14,12 @@ async function fetchCategories() {
     const uniqueCategories = [];
 
     // 모든 카테고리 데이터를 순회하며 중복을 제거합니다
-
     categories.forEach((category) => {
-      if (!uniqueCategoryIds.has(category.categoryId)) {
-        uniqueCategoryIds.add(category.categoryId);
+      if (category.categoryId && !uniqueCategoryIds.has(category.categoryId.toString())) {
+        uniqueCategoryIds.add(category.categoryId.toString());
 
         const booksByCategory = books
-          .filter((book) => book.categoryId.toString() === category.categoryId)
+          .filter((book) => book.categoryId && book.categoryId.toString() === category.categoryId.toString())
           .map((book) => book._id); // 책의 ObjectId만 추가
 
         category.books = booksByCategory;

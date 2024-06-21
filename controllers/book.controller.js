@@ -22,7 +22,47 @@ bookController.deleteBook = async (req, res) => {
   try {
     const bookId = req.params.id;
     const book = await Book.findByIdAndUpdate(bookId, { deleted: true }, { new: true });
-    if (!book) throw new Error('책을 찾을 수 없습니다.');
+    if (!book) throw new Error('도서 상품을 찾을 수 없습니다.');
+    res.status(200).json({ status: 'success' });
+  } catch (err) {
+    res.status(400).json({ status: 'fail', error: err.message });
+  }
+};
+
+bookController.addBook = async (req, res) => {
+  try {
+    const { isbn, title, author, categoryName, publisher, cover, description, priceStandard, priceSales, stockStatus } =
+      req.body;
+    const book = new Book({
+      isbn,
+      title,
+      author,
+      categoryName,
+      publisher,
+      cover,
+      description,
+      priceStandard,
+      priceSales,
+      stockStatus,
+    });
+    await book.save();
+    res.status(200).json({ status: 'success', book });
+  } catch (err) {
+    res.status(400).json({ status: 'fail', error: err.message });
+  }
+};
+
+bookController.updateBook = async (req, res) => {
+  try {
+    const bookId = req.params.id;
+    const { isbn, title, author, categoryName, publisher, cover, description, priceStandard, priceSales, stockStatus } =
+      req.body;
+    const book = await Book.findByIdAndUpdate(
+      bookId,
+      { isbn, title, author, categoryName, publisher, cover, description, priceStandard, priceSales, stockStatus },
+      { new: true },
+    );
+    if (!book) throw new Error('도서 상품을 찾을 수 없습니다.');
     res.status(200).json({ status: 'success' });
   } catch (err) {
     res.status(400).json({ status: 'fail', error: err.message });
