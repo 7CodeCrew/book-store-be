@@ -44,4 +44,22 @@ userController.getUser = async (req, res) => {
   }
 };
 
+userController.getAllAdmin = async (req, res) => {
+  try {
+    const users = await User.find({ role: 'admin' });
+    return res.status(200).json({ status: 'success', users });
+  } catch (error) {
+    res.status(400).json({ status: 'error', error: error.message });
+  }
+};
+
+userController.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    return res.status(200).json({ status: 'success', users });
+  } catch (error) {
+    res.status(400).json({ status: 'error', error: error.message });
+  }
+};
+
 module.exports = userController;
