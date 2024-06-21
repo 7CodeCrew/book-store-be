@@ -1,5 +1,6 @@
 const Category = require('../models/Category');
 const Book = require('../models/Book');
+
 async function fetchCategories() {
   try {
     // 모든 카테고리 데이터를 조회합니다
@@ -21,8 +22,6 @@ async function fetchCategories() {
         const booksByCategory = books
           .filter((book) => book.categoryId.toString() === category.categoryId)
           .map((book) => book._id); // 책의 ObjectId만 추가
-
-        console.log(booksByCategory);
 
         category.books = booksByCategory;
         uniqueCategories.push(category);
