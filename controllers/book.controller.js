@@ -6,7 +6,7 @@ const bookController = {};
 bookController.getAllBooks = async (req, res) => {
   try {
     const { isbn, title, author, publisher } = req.query;
-    const condition = { stockStatus: '', deleted: { $ne: true } };
+    const condition = { deleted: { $ne: true } };
     if (isbn) condition.isbn = { $regex: isbn, $options: 'i' };
     if (title) condition.title = { $regex: title, $options: 'i' };
     if (author) condition.author = { $regex: author, $options: 'i' };
