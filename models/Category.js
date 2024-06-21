@@ -14,10 +14,8 @@ const categorySchema = new mongoose.Schema(
     },
     books: [
       {
-        bookId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Book',
-        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Book',
       },
     ],
   },

@@ -22,6 +22,8 @@ async function fetchCategories() {
           .filter((book) => book.categoryId.toString() === category.categoryId)
           .map((book) => book._id); // 책의 ObjectId만 추가
 
+        console.log(booksByCategory);
+
         category.books = booksByCategory;
         uniqueCategories.push(category);
       }
