@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const express = require('express');
 const Book = require('../models/Book');
 const Category = require('../models/Category');
@@ -63,6 +65,21 @@ bookController.getBooksByQueryType = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error by getting book', err });
+  }
+};
+
+bookController.getBookDetailById = async(req,res)=>{
+  try{
+    const id = req.params.id;
+    console.log('백엔드에서 디테일 아이디: ', id)
+    if (!mongoose.Types.ObjectId.isValid(id)){
+      throw new Error("Invalid ID format")
+    }
+    const book= await Book.findById(id);
+    if(!book) throw new Error("No item found");
+    res.status(200).json({status: "success", data: book});
+  }catch(error){
+    return res.status(400).json({status:"fail", error: error.message})
   }
 };
 module.exports = bookController;
