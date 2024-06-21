@@ -19,6 +19,7 @@ const bookSchema = new mongoose.Schema(
     priceSales: { type: Number },
     customerReviewRank: { type: Number, required: true },
     queryType: { type: String },
+    deleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

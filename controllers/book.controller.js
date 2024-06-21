@@ -5,15 +5,25 @@ const bookController = {};
 
 bookController.getAllBooks = async (req, res) => {
   try {
-    const { isbn, title, author, category, publisher } = req.query;
-    const condition = { stockStatus: '' };
+    const { isbn, title, author, publisher } = req.query;
+    const condition = { stockStatus: '', deleted: { $ne: true } };
     if (isbn) condition.isbn = { $regex: isbn, $options: 'i' };
     if (title) condition.title = { $regex: title, $options: 'i' };
     if (author) condition.author = { $regex: author, $options: 'i' };
-    if (category) condition.categoryName = { $regex: category, $options: 'i' };
     if (publisher) condition.publisher = { $regex: publisher, $options: 'i' };
     const books = await Book.find(condition);
     res.status(200).json({ status: 'success', books });
+  } catch (err) {
+    res.status(400).json({ status: 'fail', error: err.message });
+  }
+};
+
+bookController.deleteBook = async (req, res) => {
+  try {
+    const bookId = req.params.id;
+    const book = await Book.findByIdAndUpdate(bookId, { deleted: true }, { new: true });
+    if (!book) throw new Error('책을 찾을 수 없습니다.');
+    res.status(200).json({ status: 'success' });
   } catch (err) {
     res.status(400).json({ status: 'fail', error: err.message });
   }
