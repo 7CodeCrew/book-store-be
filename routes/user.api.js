@@ -13,4 +13,6 @@ router.get('/admin', authController.authenticate, authController.checkAdminPermi
 // all users
 router.get('/all', authController.authenticate, authController.checkAdminPermission, userController.getAllUsers);
 
+router.put('/:id', authController.authenticate, authController.checkAdminPermission, userController.updateLevel);
+
 module.exports = router;

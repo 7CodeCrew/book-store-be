@@ -62,4 +62,19 @@ userController.getAllUsers = async (req, res) => {
   }
 };
 
+userController.updateLevel = async (req, res) => {
+  try {
+    const { id } = req.params; // URL 경로에서 id를 추출
+    const { level } = req.body;
+
+    // 사용자 업데이트
+    const user = await User.findByIdAndUpdate(id, { level }, { new: true });
+    if (!user) throw new Error("User doesn't exist");
+
+    res.status(200).json({ status: 'Success', user });
+  } catch (error) {
+    res.status(400).json({ status: 'error', error: error.message });
+  }
+};
+
 module.exports = userController;
