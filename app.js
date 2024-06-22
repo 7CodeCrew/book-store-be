@@ -18,14 +18,14 @@ const COOKIE_SECRET = RandomStringGenerator.generateRandomString();
 
 app.use(bodyParser.json());
 
-app.use(cors());
-
+// app.use(cors());
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(
   session({
     saveUninitialized: false,
     resave: false,
     secret: COOKIE_SECRET,
-    cookie: { secure: true, sameSite: 'none', httpOnly: true },
+    cookie: {secure: true, sameSite: 'none', httpOnly: true },
   }),
 );
 
