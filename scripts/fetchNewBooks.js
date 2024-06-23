@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Book = require('../models/Book');
 const dotenv = require('dotenv');
 const Category = require('../models/Category');
-const Author = require("../models/Author")
+const Author = require('../models/Author');
 dotenv.config();
 
 async function fetchNewBooks() {
@@ -40,6 +40,7 @@ async function fetchBooks(page, queryType) {
       newBook.queryType = queryType;
       await newBook.save();
 
+      // 카테고리 데이터 만들어서 저장하기
       const category = {
         categoryId: book.categoryId,
         categoryName: book.categoryName,
@@ -47,9 +48,11 @@ async function fetchBooks(page, queryType) {
       };
       const newCategory = new Category(category);
       await newCategory.save();
+
+      // 저자 데이터 만들어서 저장하기
       const author = {
-        authorName : book.author,
-        books : [],
+        authorName: book.author,
+        books: [],
       };
       const newAuthor = new Author(author);
       await newAuthor.save();

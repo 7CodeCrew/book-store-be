@@ -1,5 +1,5 @@
 const Book = require('../models/Book');
-const Author = require('../models/Author')
+const Author = require('../models/Author');
 
 async function fetchAuthors() {
   try {

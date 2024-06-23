@@ -6,7 +6,7 @@ const authorSchema = new mongoose.Schema(
   {
     authorName: {
       type: String,
-    //   required: true,
+      //   required: true,
     },
     books: [
       {

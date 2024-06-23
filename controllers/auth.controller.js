@@ -115,14 +115,12 @@ authController.loginWithKakao = async (req, res, next) => {
 authController.loginWithGithub = async (req, res, next) => {
   try {
     const { code } = req.query;
-    console.log(code);
     const finalUrl = 'https://github.com/login/oauth/access_token';
     const body = {
       client_id: GITHUB_CLIENT_ID,
       client_secret: GITHUB_CLIENT_SECRET_ID,
       code,
     };
-    console.log(body);
 
     const { data: requestToken } = await axios.post(finalUrl, body, {
       headers: { Accept: 'application/json' },
@@ -131,7 +129,6 @@ authController.loginWithGithub = async (req, res, next) => {
 
     // github api 서버로 요청보낼 주소
     const apiUrl = 'https://api.github.com';
-    console.log(access_token);
     // 깃허브 유저 정보 받아오기
     const { data: userdata } = await axios.get(`${apiUrl}/user`, {
       headers: { Authorization: `token ${access_token}` },
@@ -143,7 +140,6 @@ authController.loginWithGithub = async (req, res, next) => {
     // });
 
     const { email, name } = userdata;
-    console.log(userdata);
     const user = await User.findOne({ email });
 
     req.user = user;
@@ -165,7 +161,6 @@ authController.authenticate = async (req, res, next) => {
     const token = tokenString.replace('Bearer ', '');
     jwt.verify(token, JWT_SECRET_KEY, (error, payload) => {
       if (error) {
-        console.log('invalid token', error);
         return res.status(401).json({ status: 'fail', message: 'Invalid token' });
       }
       req.userId = payload._id;
