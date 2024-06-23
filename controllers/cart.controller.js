@@ -49,6 +49,11 @@ cartController.addItemToCart = async (req, res) => {
 cartController.getCartList = async (req, res) => {
   try {
     const { userId } = req;
+
+    // 사용자 정보 가져오기
+    const user = await User.findById(userId);
+
+    // 장바구니 항목 가져오기
     const cartList = await Cart.findOne({ userId }).populate({
       path: 'items',
       populate: {
@@ -56,7 +61,13 @@ cartController.getCartList = async (req, res) => {
         model: Book,
       },
     });
-    res.status(200).json({ status: 'Success', data: cartList.items });
+
+    if (!user || !cartList) {
+      return res.status(404).json({ status: 'Fail', message: 'User or cart not found' });
+    }
+
+    // 사용자 정보와 장바구니 항목을 배열 형태로 응답
+    res.status(200).json({ status: 'Success', data: { user, items: cartList.items } });
   } catch (error) {
     return res.status(400).json({ status: 'Fail..', message: error.message });
   }
