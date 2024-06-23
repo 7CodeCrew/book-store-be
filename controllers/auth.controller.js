@@ -33,41 +33,41 @@ authController.loginWithEmail = async (req, res) => {
   }
 };
 
-authController.loginWithGoogle = async(req, res) => {
-  try{
-      const { token } = req.body;
-      if (!token) {
-        throw new Error('Token is missing');
-      }
-      const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-      // const ticket = await googleClient.verifyIdToken({
-      //     idToken: token,
-      //     audience: process.env.GOOGLE_CLIENT_ID,
-      // });
-      // const ticket = await googleClient.getTokenInfo(token);
-      const { data: ticket } = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json`, {
-        headers: { Authorization: `Bearer ${token}` },
+authController.loginWithGoogle = async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      throw new Error('Token is missing');
+    }
+    const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    // const ticket = await googleClient.verifyIdToken({
+    //     idToken: token,
+    //     audience: process.env.GOOGLE_CLIENT_ID,
+    // });
+    // const ticket = await googleClient.getTokenInfo(token);
+    const { data: ticket } = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const { email, name } = ticket;
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      const randomPassword = '' + Math.floor(Math.random() * 100000000);
+      const salt = await bcrypt.genSalt(10);
+
+      const newPassword = await bcrypt.hash(randomPassword, salt);
+      user = new User({
+        userName: name,
+        email,
+        password: newPassword,
       });
-      const { email, name } = ticket
-      let user = await User.findOne({email});
-
-      if (!user){
-          const randomPassword = '' + Math.floor(Math.random()*100000000);
-          const salt = await bcrypt.genSalt(10);
-
-          const newPassword = await bcrypt.hash(randomPassword, salt);
-          user = new User({
-              userName : name, 
-              email,
-              password: newPassword,
-          });
-          await user.save();
-      }
-      const sessionToken = jwt.sign({ _id: user._id }, JWT_SECRET_KEY, { expiresIn: '1h' });
-      return res.status(200).json({status: 'success', user, token: sessionToken});
-  }catch(error){
-      console.log('Error during Google login:', error); 
-      res.status(400).json({status:"fail", error:error.message});
+      await user.save();
+    }
+    const sessionToken = jwt.sign({ _id: user._id }, JWT_SECRET_KEY, { expiresIn: '1h' });
+    return res.status(200).json({ status: 'success', user, token: sessionToken });
+  } catch (error) {
+    console.log('Error during Google login:', error);
+    res.status(400).json({ status: 'fail', error: error.message });
   }
 };
 
@@ -115,12 +115,14 @@ authController.loginWithKakao = async (req, res, next) => {
 authController.loginWithGithub = async (req, res, next) => {
   try {
     const { code } = req.query;
+    console.log(code);
     const finalUrl = 'https://github.com/login/oauth/access_token';
     const body = {
       client_id: GITHUB_CLIENT_ID,
       client_secret: GITHUB_CLIENT_SECRET_ID,
       code,
     };
+    console.log(body);
 
     const { data: requestToken } = await axios.post(finalUrl, body, {
       headers: { Accept: 'application/json' },
@@ -129,18 +131,19 @@ authController.loginWithGithub = async (req, res, next) => {
 
     // github api 서버로 요청보낼 주소
     const apiUrl = 'https://api.github.com';
-
+    console.log(access_token);
     // 깃허브 유저 정보 받아오기
     const { data: userdata } = await axios.get(`${apiUrl}/user`, {
       headers: { Authorization: `token ${access_token}` },
     });
+
     // 깃허브 유저 이메일 정보 받아오기
     // const { data: emailDataArr } = await axios.get(`${apiUrl}/user/emails`, {
     //   headers: { Authorization: `token ${access_token}` },
     // });
 
     const { email, name } = userdata;
-
+    console.log(userdata);
     const user = await User.findOne({ email });
 
     req.user = user;
@@ -153,35 +156,34 @@ authController.loginWithGithub = async (req, res, next) => {
   next();
 };
 
-
 authController.authenticate = async (req, res, next) => {
   try {
-      const tokenString = req.headers.authorization;
-      if (!tokenString) {
-          throw new Error("Authentication token does not exist!");
+    const tokenString = req.headers.authorization;
+    if (!tokenString) {
+      throw new Error('Authentication token does not exist!');
+    }
+    const token = tokenString.replace('Bearer ', '');
+    jwt.verify(token, JWT_SECRET_KEY, (error, payload) => {
+      if (error) {
+        console.log('invalid token', error);
+        return res.status(401).json({ status: 'fail', message: 'Invalid token' });
       }
-      const token = tokenString.replace("Bearer ", "");
-      jwt.verify(token, JWT_SECRET_KEY, (error, payload) => {
-          if (error) {
-              console.log("invalid token", error);
-              return res.status(401).json({ status: "fail", message: "Invalid token" });
-          }
-          req.userId = payload._id;
-          next(); 
-      });
+      req.userId = payload._id;
+      next();
+    });
   } catch (error) {
-      res.status(400).json({ status: "fail", message: error.message });
+    res.status(400).json({ status: 'fail', message: error.message });
   }
 };
 
-authController.checkAdminPermission = async(req, res, next) => {
-  try{
-      const { userId } = req
-      const user = await User.findById(userId);
-      if(user.role !== "admin") throw new Error("no permission")
-      next()
-  }catch(error){
-      res.status(400).json({status:"fail", error:error.message})
+authController.checkAdminPermission = async (req, res, next) => {
+  try {
+    const { userId } = req;
+    const user = await User.findById(userId);
+    if (user.role !== 'admin') throw new Error('no permission');
+    next();
+  } catch (error) {
+    res.status(400).json({ status: 'fail', error: error.message });
   }
 };
 

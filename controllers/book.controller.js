@@ -10,7 +10,7 @@ bookController.getAllBooks = async (req, res) => {
     const { total, isbn, title, author, publisher, queryType, categoryId } = req.query;
     let condition = { deleted: { $ne: true } };
 
-    if (total) condition = { $and: [condition, {$or: [ 
+    if (total) condition = { $and: [condition, {$or: [
       {isbn: { $regex: total, $options: 'i' } },
       {title: { $regex: total, $options: 'i' } },
       {author: { $regex: total, $options: 'i' } },
@@ -98,11 +98,10 @@ bookController.getBooksByCategory = async (req, res) => {
       status: 'success',
       data: category.books,
     };
-
-    return res.status(200).json(response);
+    res.status(200).json(response);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Error by getting book', err });
+    res.status(500).json({ message: 'Error by getting book by Category', err });
   }
 };
 bookController.getBookDetailById = async (req, res) => {

@@ -40,11 +40,9 @@ async function fetchBooks(page, queryType) {
       newBook.queryType = queryType;
       await newBook.save();
 
-      const parts = book.categoryName.split('>');
-      const modifiedCategoryName = parts[1];
       const category = {
         categoryId: book.categoryId,
-        categoryName: modifiedCategoryName,
+        categoryName: book.categoryName,
         books: [],
       };
       const newCategory = new Category(category);

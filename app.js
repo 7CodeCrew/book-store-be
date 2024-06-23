@@ -19,16 +19,16 @@ const COOKIE_SECRET = RandomStringGenerator.generateRandomString();
 
 app.use(bodyParser.json());
 
-app.use(cors());
-// app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
-// app.use(
-//   session({
-//     saveUninitialized: false,
-//     resave: false,
-//     secret: COOKIE_SECRET,
-//     cookie: {secure: true, sameSite: 'none', httpOnly: true },
-//   }),
-// );
+// app.use(cors());
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(
+  session({
+    saveUninitialized: false,
+    resave: false,
+    secret: COOKIE_SECRET,
+    cookie: { secure: true, sameSite: 'none', httpOnly: true },
+  }),
+);
 
 // 몽고 디비 URI: 프로덕션 환경일 경우 MONGODB_URI_PROD (몽고 아틀라스), 아니면 로컬호스트.
 const MONGODB_URI = process.env.NODE_ENV === 'production' ? process.env.MONGODB_URI_PROD : process.env.MONGODB_URI_DEV;
