@@ -7,8 +7,17 @@ const bookController = {};
 
 bookController.getAllBooks = async (req, res) => {
   try {
-    const { isbn, title, author, publisher, queryType, categoryId } = req.query;
-    const condition = { deleted: { $ne: true } };
+    const { total, isbn, title, author, publisher, queryType, categoryId } = req.query;
+    let condition = { deleted: { $ne: true } };
+
+    if (total) condition = { $and: [condition, {$or: [ 
+      {isbn: { $regex: total, $options: 'i' } },
+      {title: { $regex: total, $options: 'i' } },
+      {author: { $regex: total, $options: 'i' } },
+      {publisher: { $regex: total, $options: 'i' } },
+      {queryType: { $regex: total, $options: 'i' } },
+      {categoryId: { $regex: total, $options: 'i' } },
+    ]}] };
     if (isbn) condition.isbn = { $regex: isbn, $options: 'i' };
     if (title) condition.title = { $regex: title, $options: 'i' };
     if (author) condition.author = { $regex: author, $options: 'i' };
