@@ -122,4 +122,8 @@ bookController.getBooksByGroup = async (req, res) => {
     res.status(500).json({ message: 'Error by getting book', err });
   }
 };
+
+// bookController.getBooksByAuthor = async(req,res) => {
+
+// };
 module.exports = bookController;

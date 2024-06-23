@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Book = require('../models/Book');
 const dotenv = require('dotenv');
 const Category = require('../models/Category');
-
+const Author = require("../models/Author")
 dotenv.config();
 
 async function fetchNewBooks() {
@@ -49,6 +49,12 @@ async function fetchBooks(page, queryType) {
       };
       const newCategory = new Category(category);
       await newCategory.save();
+      const author = {
+        authorName : book.author,
+        books : [],
+      };
+      const newAuthor = new Author(author);
+      await newAuthor.save();
     }
     page += 1;
   } while (page < Math.ceil(totalResults / itemsPerPage));

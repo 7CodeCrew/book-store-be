@@ -10,6 +10,7 @@ const Book = require('./models/Book');
 const fetchNewBooks = require('./scripts/fetchNewBooks');
 const fetchCategories = require('./scripts/fetchCategories');
 const indexRouter = require('./routes/index');
+const fetchAuthors = require('./scripts/fetchAuthors');
 
 const app = express();
 
@@ -49,6 +50,7 @@ mongoose
     }
 
     await fetchCategories();
+    await fetchAuthors();
 
     app.get('/', (req, res) => {
       res.send('Hello BookDo7Stars!');
