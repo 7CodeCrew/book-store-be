@@ -8,18 +8,19 @@ async function fetchCategories() {
     const books = await Book.find({});
 
     // 중복을 제거하고 유니크한 categoryId를 가진 카테고리 데이터를 담을 Set을 생성합니다
-    const uniqueCategoryIds = new Set();
+    const uniqueCategoryNames = new Set();
 
     // 중복 제거된 카테고리 데이터를 담을 배열을 초기화합니다
     const uniqueCategories = [];
 
     // 모든 카테고리 데이터를 순회하며 중복을 제거합니다
+
     categories.forEach((category) => {
-      if (category.categoryId && !uniqueCategoryIds.has(category.categoryId.toString())) {
-        uniqueCategoryIds.add(category.categoryId.toString());
+      if (!uniqueCategoryNames.has(category.categoryName)) {
+        uniqueCategoryNames.add(category.categoryName);
 
         const booksByCategory = books
-          .filter((book) => book.categoryId && book.categoryId.toString() === category.categoryId.toString())
+          .filter((book) => book.categoryId.toString() === category.categoryId)
           .map((book) => book._id); // 책의 ObjectId만 추가
 
         category.books = booksByCategory;

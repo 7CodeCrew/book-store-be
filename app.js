@@ -10,6 +10,7 @@ const Book = require('./models/Book');
 const fetchNewBooks = require('./scripts/fetchNewBooks');
 const fetchCategories = require('./scripts/fetchCategories');
 const indexRouter = require('./routes/index');
+const fetchAuthors = require('./scripts/fetchAuthors');
 
 const app = express();
 
@@ -18,14 +19,14 @@ const COOKIE_SECRET = RandomStringGenerator.generateRandomString();
 
 app.use(bodyParser.json());
 
-app.use(cors());
-
+// app.use(cors());
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(
   session({
     saveUninitialized: false,
     resave: false,
     secret: COOKIE_SECRET,
-    cookie: { secure: true, sameSite: 'none' },
+    cookie: { secure: true, sameSite: 'none', httpOnly: true },
   }),
 );
 
@@ -49,6 +50,7 @@ mongoose
     }
 
     await fetchCategories();
+    await fetchAuthors();
 
     app.get('/', (req, res) => {
       res.send('Hello BookDo7Stars!');
