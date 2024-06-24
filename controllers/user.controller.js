@@ -66,7 +66,7 @@ userController.updateLevel = async (req, res) => {
     const { id } = req.params; // URL 경로에서 id를 추출
     const { level } = req.body;
 
-    // 사용자 업데이트
+    // 사용자 레벨 업데이트
     const user = await User.findByIdAndUpdate(id, { level }, { new: true });
     if (!user) throw new Error("User doesn't exist");
 
