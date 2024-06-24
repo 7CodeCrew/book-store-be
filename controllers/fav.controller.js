@@ -40,11 +40,7 @@ favController.deleteFavorite = async (req, res) => {
   try {
     const { userId } = req;
     const bookID = req.params.id;
-    const favorite = await Favorite.findOneAndUpdate(
-      { userId },
-      { $pull: { favorite: bookID } },
-      { new: true, upsert: true },
-    );
+    const favorite = await Favorite.findOneAndUpdate({ userId }, { $pull: { favorite: bookID } }, { new: true });
     res.status(200).json({ status: 'success' });
   } catch (err) {
     res.status(400).json({ status: 'fail', error: err.message });
