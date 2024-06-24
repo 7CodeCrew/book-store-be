@@ -13,6 +13,7 @@ router.get('/admin', authController.authenticate, authController.checkAdminPermi
 // all users
 router.get('/all', authController.authenticate, authController.checkAdminPermission, userController.getAllUsers);
 
+// admin에서 user level 업데이트
 router.put('/:id', authController.authenticate, authController.checkAdminPermission, userController.updateLevel);
 
 module.exports = router;

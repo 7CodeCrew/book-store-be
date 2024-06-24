@@ -1,4 +1,6 @@
 require('dotenv').config;
+const axios = require('axios');
+const qs = require('qs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
@@ -7,6 +9,10 @@ const { GoogleAuth, OAuth2Client } = require('google-auth-library');
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+const KAKAO_API_KEY = process.env.KAKAO_API_KEY;
+const REDIRECT_KAKAO_CALLBACK = process.env.REDIRECT_KAKAO_CALLBACK;
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET_ID = process.env.GITHUB_CLIENT_SECRET_ID;
 
 const authController = {};
 
@@ -34,11 +40,15 @@ authController.loginWithGoogle = async (req, res) => {
       throw new Error('Token is missing');
     }
     const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-    const ticket = await googleClient.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+    // const ticket = await googleClient.verifyIdToken({
+    //     idToken: token,
+    //     audience: process.env.GOOGLE_CLIENT_ID,
+    // });
+    // const ticket = await googleClient.getTokenInfo(token);
+    const { data: ticket } = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
-    const { email, name } = ticket.getPayload();
+    const { email, name } = ticket;
     let user = await User.findOne({ email });
 
     if (!user) {
@@ -61,6 +71,168 @@ authController.loginWithGoogle = async (req, res) => {
   }
 };
 
+// 카카오 로그인
+authController.loginWithKakao = async (req, res, next) => {
+  try {
+    const kakaoToken = await axios({
+      method: 'POST',
+      url: 'https://kauth.kakao.com/oauth/token',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      data: qs.stringify({
+        grant_type: 'authorization_code',
+        client_id: KAKAO_API_KEY,
+        redirectUri: REDIRECT_KAKAO_CALLBACK,
+        code: req.query.code,
+      }),
+    });
+    const kakaoUser = await axios({
+      method: 'GET',
+      url: 'https://kapi.kakao.com/v2/user/me',
+      headers: {
+        Authorization: `Bearer ${kakaoToken.data.access_token}`,
+      },
+    });
+
+    const email = 'kakao' + kakaoUser.data.id;
+    const user = await User.findOne({ email });
+
+    req.user = user;
+    req.email = email;
+    req.kakaoAccessToken = kakaoToken.data.access_token;
+    req.kakaoId = kakaoUser.data.id;
+    req.userName = kakaoUser.data.properties.nickname;
+    req.connectedAt = kakaoUser.data.connected_at;
+  } catch (e) {
+    req.statusCode = 400;
+    req.error = e.message;
+  }
+  next();
+};
+
+// 깃허브 로그인 callback
+authController.loginWithGithub = async (req, res, next) => {
+  try {
+    const { code } = req.query;
+    const finalUrl = 'https://github.com/login/oauth/access_token';
+    const body = {
+      client_id: GITHUB_CLIENT_ID,
+      client_secret: GITHUB_CLIENT_SECRET_ID,
+      code,
+    };
+
+    const { data: requestToken } = await axios.post(finalUrl, body, {
+      headers: { Accept: 'application/json' },
+    });
+    const { access_token } = requestToken;
+
+    // github api 서버로 요청보낼 주소
+    const apiUrl = 'https://api.github.com';
+    // 깃허브 유저 정보 받아오기
+    const { data: userdata } = await axios.get(`${apiUrl}/user`, {
+      headers: { Authorization: `token ${access_token}` },
+    });
+
+    // 깃허브 유저 이메일 정보 받아오기
+    // const { data: emailDataArr } = await axios.get(`${apiUrl}/user/emails`, {
+    //   headers: { Authorization: `token ${access_token}` },
+    // });
+
+    const { email, name } = userdata;
+    const user = await User.findOne({ email });
+
+    req.user = user;
+    req.email = email;
+    req.userName = name;
+  } catch (e) {
+    req.statusCode = 400;
+    req.error = e.message;
+  }
+  next();
+};
+
+// 카카오 로그인
+authController.loginWithKakao = async (req, res, next) => {
+  try {
+    const kakaoToken = await axios({
+      method: 'POST',
+      url: 'https://kauth.kakao.com/oauth/token',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      data: qs.stringify({
+        grant_type: 'authorization_code',
+        client_id: KAKAO_API_KEY,
+        redirectUri: REDIRECT_KAKAO_CALLBACK,
+        code: req.query.code,
+      }),
+    });
+    const kakaoUser = await axios({
+      method: 'GET',
+      url: 'https://kapi.kakao.com/v2/user/me',
+      headers: {
+        Authorization: `Bearer ${kakaoToken.data.access_token}`,
+      },
+    });
+
+    const email = 'kakao' + kakaoUser.data.id;
+    const user = await User.findOne({ email });
+
+    req.user = user;
+    req.email = email;
+    req.kakaoAccessToken = kakaoToken.data.access_token;
+    req.kakaoId = kakaoUser.data.id;
+    req.userName = kakaoUser.data.properties.nickname;
+    req.connectedAt = kakaoUser.data.connected_at;
+  } catch (e) {
+    req.statusCode = 400;
+    req.error = e.message;
+  }
+  next();
+};
+
+// 깃허브 로그인 callback
+authController.loginWithGithub = async (req, res, next) => {
+  try {
+    const { code } = req.query;
+    const finalUrl = 'https://github.com/login/oauth/access_token';
+    const body = {
+      client_id: GITHUB_CLIENT_ID,
+      client_secret: GITHUB_CLIENT_SECRET_ID,
+      code,
+    };
+
+    const { data: requestToken } = await axios.post(finalUrl, body, {
+      headers: { Accept: 'application/json' },
+    });
+    const { access_token } = requestToken;
+
+    // github api 서버로 요청보낼 주소
+    const apiUrl = 'https://api.github.com';
+    // 깃허브 유저 정보 받아오기
+    const { data: userdata } = await axios.get(`${apiUrl}/user`, {
+      headers: { Authorization: `token ${access_token}` },
+    });
+
+    // 깃허브 유저 이메일 정보 받아오기
+    // const { data: emailDataArr } = await axios.get(`${apiUrl}/user/emails`, {
+    //   headers: { Authorization: `token ${access_token}` },
+    // });
+
+    const { email, name } = userdata;
+    const user = await User.findOne({ email });
+
+    req.user = user;
+    req.email = email;
+    req.userName = name;
+  } catch (e) {
+    req.statusCode = 400;
+    req.error = e.message;
+  }
+  next();
+};
+
 authController.authenticate = async (req, res, next) => {
   try {
     const tokenString = req.headers.authorization;
@@ -70,7 +242,6 @@ authController.authenticate = async (req, res, next) => {
     const token = tokenString.replace('Bearer ', '');
     jwt.verify(token, JWT_SECRET_KEY, (error, payload) => {
       if (error) {
-        console.log('invalid token', error);
         return res.status(401).json({ status: 'fail', message: 'Invalid token' });
       }
       req.userId = payload._id;

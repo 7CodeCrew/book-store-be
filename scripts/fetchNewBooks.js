@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Book = require('../models/Book');
 const dotenv = require('dotenv');
 const Category = require('../models/Category');
-
+const Author = require('../models/Author');
 dotenv.config();
 
 async function fetchNewBooks() {
@@ -40,15 +40,22 @@ async function fetchBooks(page, queryType) {
       newBook.queryType = queryType;
       await newBook.save();
 
-      const parts = book.categoryName.split('>');
-      const modifiedCategoryName = parts[1];
+      // 카테고리 데이터 만들어서 저장하기
       const category = {
         categoryId: book.categoryId,
-        categoryName: modifiedCategoryName,
+        categoryName: book.categoryName,
         books: [],
       };
       const newCategory = new Category(category);
       await newCategory.save();
+
+      // 저자 데이터 만들어서 저장하기
+      const author = {
+        authorName: book.author,
+        books: [],
+      };
+      const newAuthor = new Author(author);
+      await newAuthor.save();
     }
     page += 1;
   } while (page < Math.ceil(totalResults / itemsPerPage));
