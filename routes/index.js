@@ -8,6 +8,7 @@ const categoryApi = require('./category.api');
 const orderApi = require('./order.api');
 const cartApi = require('./cart.api');
 const commentApi = require("./comment.api.js")
+const authorApi = require("./author.api.js")
 
 Router.use('/auth', authApi);
 Router.use('/user', userApi);
@@ -16,5 +17,6 @@ Router.use('/category', categoryApi);
 Router.use('/order', orderApi);
 Router.use('/cart', cartApi);
 Router.use("/comments", commentApi);
+Router.use("/author", authorApi)
 
 module.exports = Router;
