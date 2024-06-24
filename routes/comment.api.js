@@ -7,7 +7,7 @@ const commentController = require("../controllers/comment.controller");
 router.post("/", authController.authenticate, commentController.addComment);
 
 // 특정 제품의 댓글 조회
-router.get("/book/:bookId", commentController.getCommentsByProduct);
+router.get("/book/:bookId", commentController.getCommentsByBook);
 
 // 댓글 삭제
 router.delete("/:id", authController.authenticate, commentController.deleteComment);

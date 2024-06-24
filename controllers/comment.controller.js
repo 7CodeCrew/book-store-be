@@ -11,7 +11,7 @@ commentController.addComment = async (req, res) => {
 
         const { content, bookId } = req.body
         const userId = req.userId
-
+        console.log("payload잘들어옴->", content, bookId)
         const user = await User.findById(userId)
 
         if (!user) {
@@ -21,12 +21,13 @@ commentController.addComment = async (req, res) => {
         const comment = new Comment({
             userId, 
             bookId,
-            email: user.email,
+
             content
         });
+        console.log("코멘트->", comment)
 
         await comment.save();
-        res.status(201).json(comment.toJson())
+        res.status(201).json({statue: "success", comment})
     } catch (error) {
         console.error('Error adding comment:', error)
         res.status(500).json({ status: "fail", error: error.message })
@@ -34,11 +35,12 @@ commentController.addComment = async (req, res) => {
 };
 
 // 특정 제품의 댓글 조회
-commentController.getCommentsByProduct = async (req, res) => {
+commentController.getCommentsByBook = async (req, res) => {
     try {
         const { bookId } = req.params;
-        const comments = await Comment.find({ bookId, isDeleted: false }).sort({ createdAt: -1 });
-        res.status(200).json({ status: "success", data: comments.map(comment => comment.toJson()) });
+        const comments = await Comment.find({ bookId:bookId, isDeleted: false }).populate({path:"userId", model:"User"}).sort({ createdAt: -1 })
+        console.log("comments->>>", comments)
+        res.status(200).json({ status: "success", comments });
     } catch (error) {
         res.status(500).json({ status: "fail", error: error.message });
     }

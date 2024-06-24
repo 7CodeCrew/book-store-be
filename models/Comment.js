@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const commentSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     bookId: { type: Schema.Types.ObjectId, ref: 'Book', required: true },
-    email: { type: String, required: true },
     content: { type: String, required: true },
     isDeleted: { type: Boolean, default: false }
 }, { timestamps: true });
