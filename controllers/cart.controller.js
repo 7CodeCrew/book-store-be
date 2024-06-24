@@ -102,7 +102,7 @@ cartController.getCartQty = async (req, res) => {
     if (!cart) throw new Error('카트가 존재하지 않습니다.');
     res.status(200).json({ status: 'Success', qty: cart.items.length });
   } catch (error) {
-    return res.status(400).json({ status: 'fail', error: error.message });
+    return res.status(400).json({ status: 'Fail', error: error.message });
   }
 };
 
