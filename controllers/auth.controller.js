@@ -15,17 +15,16 @@ const GITHUB_CLIENT_SECRET_ID = process.env.GITHUB_CLIENT_SECRET_ID;
 
 const authController = {};
 
-authController.checkAdminPermission = async(req, res, next) => {
-  try{
-      const { userId } = req
-      const user = await User.findById(userId);
-      if(user.level !== "admin") throw new Error("no permission")
-      next()
-  }catch(error){
-      res.status(400).json({status:"fail", error:error.message})
+authController.checkAdminPermission = async (req, res, next) => {
+  try {
+    const { userId } = req;
+    const user = await User.findById(userId);
+    if (user.level !== 'admin') throw new Error('no permission');
+    next();
+  } catch (error) {
+    res.status(400).json({ status: 'fail', error: error.message });
   }
 };
-
 
 authController.loginWithEmail = async (req, res) => {
   try {
