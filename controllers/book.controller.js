@@ -30,7 +30,19 @@ bookController.getAllBooks = async (req, res) => {
     if (publisher) condition.publisher = { $regex: publisher, $options: 'i' };
     if (queryType) condition.queryType = { $regex: queryType, $options: 'i' };
     if (categoryId) condition.categoryId = { $regex: categoryId, $options: 'i' };
-    const books = await Book.find(condition);
+    const books = await Book.aggregate([
+      { $match: condition },
+      {
+        $group: {
+          _id: '$isbn',
+          docs: { $push: '$$ROOT' },
+          count: { $sum: 1 },
+        },
+      },
+      { $match: { count: { $eq: 1 } } },
+      { $unwind: '$docs' },
+      { $replaceRoot: { newRoot: '$docs' } },
+    ]);
     res.status(200).json({ status: 'success', books });
   } catch (err) {
     res.status(400).json({ status: 'fail', error: err.message });
@@ -117,8 +129,25 @@ bookController.getBookDetailById = async (req, res) => {
       throw new Error('Invalid ID format');
     }
     const book = await Book.findById(id);
+
+    // 작가 이름을 기반으로 작가를 찾고, 작가의 다른 책들을 가져옴
+    const authorNames = book.author;
+    const authorBooks = await Book.find({
+      author: { $in: authorNames },
+      _id: { $ne: id },
+    });
+
+    let response = {
+      status: 'success',
+      data: {
+        book: book,
+        otherBooksByAuthor: authorBooks,
+      },
+    };
+    console.log(response.data.otherBooksByAuthor);
+
     if (!book) throw new Error('No item found');
-    res.status(200).json({ status: 'success', data: book });
+    res.status(200).json(response);
   } catch (error) {
     return res.status(400).json({ status: 'fail', error: error.message });
   }
