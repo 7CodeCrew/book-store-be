@@ -164,7 +164,4 @@ bookController.getBooksByGroup = async (req, res) => {
   }
 };
 
-// bookController.getBooksByAuthor = async(req,res) => {
-
-// };
 module.exports = bookController;
