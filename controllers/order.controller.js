@@ -1,7 +1,31 @@
 const express = require('express');
 const Order = require('../models/Order');
+const bookController = require('../controllers/book.controller');
+const { randomOrderNumGen } = require('../utils/randomOrderNumGen');
 
 const orderController = {};
+
+orderController.createOrder = async (req, res) => {
+  try {
+    const { userId } = req;
+    const { totalPrice, shipTo, contact, orderList } = req.body;
+
+    const newOrder = new Order({
+      userId,
+      totalPrice,
+      shipTo,
+      contact,
+      items: orderList,
+      orderNum: randomOrderNumGen(),
+    });
+
+    await newOrder.save();
+
+    res.status(200).json({ status: 'success', orderNum: newOrder.orderNum });
+  } catch (error) {
+    return res.status(400).json({ status: 'fail', error: error.message });
+  }
+};
 
 orderController.getOrderList = async (req, res) => {
   try {
