@@ -76,4 +76,25 @@ userController.updateLevel = async (req, res) => {
   }
 };
 
+userController.myPageConfirmPassword = async (req, res) => {
+  try {
+    const { userId } = req;
+    const { password } = req.body;
+    const user = await User.findById(userId);
+    if (!user) throw new Error('회원을 찾을 수 없습니다.');
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) throw new Error('비밀번호가 일치하지 않습니다.');
+    res.status(200).json({ status: 'success' });
+  } catch (err) {
+    res.status(400).json({ status: 'error', error: err.message });
+  }
+};
+
+userController.changeUserInfo = async (req, res) => {
+  try {
+    const { userId } = req;
+    const { email, password, userName, address, phone } = req.body;
+  } catch (err) {}
+};
+
 module.exports = userController;
