@@ -6,8 +6,19 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 const userSchema = new Schema(
   {
-    email: { type: String, required: true, unique: true },
-    password: { type: String, require: true },
+    email: {
+      type: String,
+      required: function () {
+        return this.role !== 'admin';
+      },
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: function () {
+        return this.role !== 'admin';
+      },
+    },
     userName: { type: String, required: true },
     role: { type: String, default: 'customer' }, //2types: customer, admin
     level: { type: String, default: 'bronze' }, //2types: bronze, silver, gold, platinum

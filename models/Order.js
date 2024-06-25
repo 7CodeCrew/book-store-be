@@ -19,12 +19,10 @@ const orderSchema = Schema(
   },
   { timestamps: true },
 );
-
 orderSchema.methods.toJSON = function () {
   const obj = this._doc;
   delete obj.__v;
   return obj;
 };
-
 const Order = mongoose.model('Order', orderSchema);
 module.exports = Order;

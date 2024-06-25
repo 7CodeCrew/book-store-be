@@ -43,4 +43,37 @@ userController.getUser = async (req, res) => {
   }
 };
 
+userController.getAllAdmin = async (req, res) => {
+  try {
+    const users = await User.find({ role: 'admin' });
+    return res.status(200).json({ status: 'success', users });
+  } catch (error) {
+    res.status(400).json({ status: 'error', error: error.message });
+  }
+};
+
+userController.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    return res.status(200).json({ status: 'success', users });
+  } catch (error) {
+    res.status(400).json({ status: 'error', error: error.message });
+  }
+};
+
+userController.updateLevel = async (req, res) => {
+  try {
+    const { id } = req.params; // URL 경로에서 id를 추출
+    const { level } = req.body;
+
+    // 사용자 레벨 업데이트
+    const user = await User.findByIdAndUpdate(id, { level }, { new: true });
+    if (!user) throw new Error("User doesn't exist");
+
+    res.status(200).json({ status: 'Success', user });
+  } catch (error) {
+    res.status(400).json({ status: 'error', error: error.message });
+  }
+};
+
 module.exports = userController;
