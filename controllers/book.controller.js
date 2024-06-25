@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-
-const express = require('express');
 const Book = require('../models/Book');
 const Category = require('../models/Category');
 const bookController = {};
