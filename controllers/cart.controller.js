@@ -16,8 +16,7 @@ cartController.addItemToCart = async (req, res) => {
       await cart.save();
     }
     // 중복 항목 있으면 에러
-    const existItem = cart.items.find((item) => item.bookId.equals(bookId));
-    // const existItem = cart.items.find((item) => item.bookId && item.bookId.equals(bookId));
+    const existItem = cart.items.find((item) => item.bookId ===bookId);
 
     if (existItem) {
       throw new Error('Item already exist.');
