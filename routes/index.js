@@ -9,6 +9,8 @@ const orderApi = require('./order.api');
 const cartApi = require('./cart.api');
 const commentApi = require('./comment.api.js');
 const favoriteApi = require('./favorite.api');
+const contactApi = require('./contact.api');
+
 
 Router.use('/auth', authApi);
 Router.use('/user', userApi);
@@ -18,5 +20,6 @@ Router.use('/order', orderApi);
 Router.use('/cart', cartApi);
 Router.use('/comments', commentApi);
 Router.use('/favorite', favoriteApi);
+Router.use('/contact', contactApi)
 
 module.exports = Router;
