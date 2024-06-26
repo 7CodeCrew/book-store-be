@@ -144,7 +144,6 @@ bookController.getBookDetailById = async (req, res) => {
         otherBooksByAuthor: authorBooks,
       },
     };
-    console.log(response.data.otherBooksByAuthor);
 
     if (!book) throw new Error('No item found');
     res.status(200).json(response);

@@ -1,15 +1,15 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const authController = require("../controllers/auth.controller"); // 로그인 확인
-const commentController = require("../controllers/comment.controller");
+const authController = require('../controllers/auth.controller'); // 로그인 확인
+const commentController = require('../controllers/comment.controller');
 
 // 댓글 추가
-router.post("/", authController.authenticate, commentController.addComment);
+router.post('/', authController.authenticate, commentController.addComment);
 
 // 특정 제품의 댓글 조회
-router.get("/book/:bookId", commentController.getCommentsByBook);
+router.get('/book/:bookId', commentController.getCommentsByBook);
 
 // 댓글 삭제
-router.delete("/:id", authController.authenticate, commentController.deleteComment);
+router.delete('/:id', authController.authenticate, commentController.deleteComment);
 
 module.exports = router;
