@@ -5,7 +5,7 @@ const { creatContact, getContactsByUser, getAllContacts } = require('../controll
 
 // 1:1 문의 DB에 저장, 수정, 삭제
 router.post('/', authController.authenticate, creatContact);
-router.get('/', authController.authenticate, getAllContacts);
-router.get('/:userId', authController.authenticate, getContactsByUser);
+router.get('/', authController.authenticate, authController.checkAdminPermission, getAllContacts);
+router.get('/user', authController.authenticate, getContactsByUser);
 
 module.exports = router;

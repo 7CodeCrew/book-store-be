@@ -31,15 +31,14 @@ authController.loginWithEmail = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(403).json({status: "fail", message: '가입되지 않은 이메일입니다.'})
+      return res.status(403).json({ status: 'fail', message: '가입되지 않은 이메일입니다.' });
     }
     const isMatched = await bcrypt.compareSync(password, user.password);
     if (!isMatched) {
-      return res.status(403).json({status: "fail", message: '비밀번호가 일치하지 않습니다.'})
+      return res.status(403).json({ status: 'fail', message: '비밀번호가 일치하지 않습니다.' });
     }
     const token = await user.generateToken();
     return res.status(200).json({ status: 'success', user, token });
-
   } catch (error) {
     res.status(400).json({ status: 'fail', message: error.message });
   }
@@ -51,7 +50,7 @@ authController.loginWithGoogle = async (req, res) => {
     if (!token) {
       throw new Error('Token is missing');
     }
-    const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
     const { data: ticket } = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json`, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -77,7 +76,6 @@ authController.loginWithGoogle = async (req, res) => {
     res.status(400).json({ status: 'fail', error: error.message });
   }
 };
-
 
 authController.loginWithKakao = async (req, res, next) => {
   try {

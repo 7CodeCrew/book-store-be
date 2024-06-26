@@ -21,7 +21,7 @@ contactController.creatContact = async (req, res) => {
     });
 
     await newContact.save();
-    res.status(200).json({ status: 'success', newContact });
+    res.status(200).json({ status: 'success', data: newContact });
   } catch (err) {
     res.status(400).json({ status: 'fail', error: err.message });
   }
@@ -42,18 +42,24 @@ contactController.getAllContacts = async (req, res) => {
 
 contactController.getContactsByUser = async (req, res) => {
   try {
-    const userId = req;
-    if (!user) {
+    const userId = req.userId;
+    console.log(userId);
+
+    if (!userId) {
       return res.status(401).json('user not found!');
     }
-    const contacts = await Contact.find({}).populate({
+
+    // 사용자 ID를 기준으로 Contact 문서 조회
+    const contacts = await Contact.find({ userId: userId }).populate({
       path: 'userId',
       model: 'User',
     });
-    const contactsByUser = contacts.find({ userId: userId });
 
-    res.status(200).json({ status: 'success', contactsByUser });
+    console.log(contacts); // 조회된 contacts 로그 확인
+
+    res.status(200).json({ status: 'success', data: contacts });
   } catch (err) {
+    console.error(err); // 에러 발생 시 에러 메시지 로깅
     res.status(400).json({ status: 'fail', error: err.message });
   }
 };
