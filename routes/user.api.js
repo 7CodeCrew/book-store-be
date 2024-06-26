@@ -16,4 +16,13 @@ router.get('/all', authController.authenticate, authController.checkAdminPermiss
 // admin에서 user level 업데이트
 router.put('/:id', authController.authenticate, authController.checkAdminPermission, userController.updateLevel);
 
+// mypage -password confirm
+router.post('/confirmPassword', authController.authenticate, userController.myPageConfirmPassword);
+
+// mypage -change user info
+router.put('/myInfo/:id', authController.authenticate, userController.changeUserInfo);
+
+// mypage -delete user
+router.post('/delete/:id', authController.authenticate, userController.deleteUser);
+
 module.exports = router;

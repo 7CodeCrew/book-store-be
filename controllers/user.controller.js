@@ -76,4 +76,57 @@ userController.updateLevel = async (req, res) => {
   }
 };
 
+userController.myPageConfirmPassword = async (req, res) => {
+  try {
+    const { userId } = req;
+    const { password } = req.body;
+    const user = await User.findById(userId);
+    if (!user) throw new Error('회원을 찾을 수 없습니다.');
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) throw new Error('비밀번호가 일치하지 않습니다.');
+    res.status(200).json({ status: 'success' });
+  } catch (err) {
+    res.status(400).json({ status: 'error', error: err.message });
+  }
+};
+
+userController.changeUserInfo = async (req, res) => {
+  try {
+    const { userId } = req;
+    const { password, zipCode, address1, address2, phone } = req.body;
+    const updateFields = {};
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      updateFields.password = await bcrypt.hash(password, salt);
+    }
+    if (zipCode || address1 || address2) {
+      updateFields.address = {};
+      if (zipCode) updateFields.address.zipCode = zipCode;
+      if (address1) updateFields.address.address1 = address1;
+      if (address2) updateFields.address.address2 = address2;
+    }
+    if (phone) updateFields.phone = phone;
+    const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
+    if (!updatedUser) throw new Error('회원을 찾을 수 없습니다.');
+    res.status(200).json({ status: 'success', updatedUser });
+  } catch (err) {
+    res.status(400).json({ status: 'error', error: err.message });
+  }
+};
+
+userController.deleteUser = async (req, res) => {
+  try {
+    const { userId } = req;
+    const { password } = req.body;
+    const user = await User.findById(userId);
+    if (!user) throw new Error('회원을 찾을 수 없습니다.');
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) throw new Error('비밀번호가 일치하지 않습니다.');
+    await User.findByIdAndDelete(userId);
+    res.status(200).json({ status: 'success' });
+  } catch (err) {
+    res.status(400).json({ status: 'error', error: err.message });
+  }
+};
+
 module.exports = userController;
