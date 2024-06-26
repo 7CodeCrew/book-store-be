@@ -50,11 +50,6 @@ authController.loginWithGoogle = async (req, res) => {
       throw new Error('Token is missing');
     }
     const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-    // const ticket = await googleClient.verifyIdToken({
-    //     idToken: token,
-    //     audience: process.env.GOOGLE_CLIENT_ID,
-    // });
-    // const ticket = await googleClient.getTokenInfo(token);
     const { data: ticket } = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json`, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -81,7 +76,7 @@ authController.loginWithGoogle = async (req, res) => {
   }
 };
 
-// 카카오 로그인
+
 authController.loginWithKakao = async (req, res, next) => {
   try {
     const kakaoToken = await axios({
