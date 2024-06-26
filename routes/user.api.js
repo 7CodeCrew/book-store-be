@@ -22,4 +22,7 @@ router.post('/confirmPassword', authController.authenticate, userController.myPa
 // mypage -change user info
 router.put('/myInfo/:id', authController.authenticate, userController.changeUserInfo);
 
+// mypage -delete user
+router.post('/delete/:id', authController.authenticate, userController.deleteUser);
+
 module.exports = router;
