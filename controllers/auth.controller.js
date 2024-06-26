@@ -30,14 +30,16 @@ authController.loginWithEmail = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    if (user) {
-      const isMatch = bcrypt.compareSync(password, user.password);
-      if (isMatch) {
-        const token = await user.generateToken();
-        return res.status(200).json({ status: 'success', user, token });
-      }
+    if (!user) {
+      return res.status(403).json({status: "fail", message: '가입되지 않은 이메일입니다.'})
     }
-    throw new Error('Invalid email or password');
+    const isMatched = await bcrypt.compareSync(password, user.password);
+    if (!isMatched) {
+      return res.status(403).json({status: "fail", message: '비밀번호가 일치하지 않습니다.'})
+    }
+    const token = await user.generateToken();
+    return res.status(200).json({ status: 'success', user, token });
+
   } catch (error) {
     res.status(400).json({ status: 'fail', message: error.message });
   }
