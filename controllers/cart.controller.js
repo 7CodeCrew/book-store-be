@@ -19,7 +19,7 @@ cartController.addItemToCart = async (req, res) => {
     const existItem = cart.items.find((item) => item.bookId.equals(bookId));
 
     if (existItem) {
-      throw new Error('Item alreay exist.');
+      throw new Error('Item already exist.');
     }
     // 2. 새로운 아이템을 카트에 추가
     cart.items = [...cart.items, { bookId, qty }];

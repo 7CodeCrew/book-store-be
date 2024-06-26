@@ -5,7 +5,6 @@ const authorSchema = new mongoose.Schema(
   {
     authorName: {
       type: String,
-      required: true,
     },
     books: [
       {
@@ -14,7 +13,7 @@ const authorSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 authorSchema.methods.toJSON = function () {

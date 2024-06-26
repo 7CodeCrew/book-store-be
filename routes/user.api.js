@@ -20,6 +20,6 @@ router.put('/:id', authController.authenticate, authController.checkAdminPermiss
 router.post('/confirmPassword', authController.authenticate, userController.myPageConfirmPassword);
 
 // mypage -change user info
-router.post('/myInfo/:id', authController.authenticate, userController.changeUserInfo);
+router.put('/myInfo/:id', authController.authenticate, userController.changeUserInfo);
 
 module.exports = router;
