@@ -43,7 +43,6 @@ contactController.getAllContacts = async (req, res) => {
 contactController.getContactsByUser = async (req, res) => {
   try {
     const userId = req.userId;
-    console.log(userId);
 
     if (!userId) {
       return res.status(401).json('user not found!');
@@ -54,8 +53,6 @@ contactController.getContactsByUser = async (req, res) => {
       path: 'userId',
       model: 'User',
     });
-
-    console.log(contacts); // 조회된 contacts 로그 확인
 
     res.status(200).json({ status: 'success', data: contacts });
   } catch (err) {
