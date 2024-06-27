@@ -24,7 +24,6 @@ async function fetchNewBooks() {
 // 도서 불러오는 함수 axios call
 async function fetchBooks(page, queryType) {
   // 어떤 쿼리가 실행되는지 알기 위한 콘솔 로그
-  console.log(queryType);
   // 페이지당 50개씩 나온다. 전체 도서목록을 불러오기 위해서는 페이지가 변수로 들어가서 현재 페이지가 전체 페이지 수보다 작을 경우 계속 axios콜이 실행된다.
   const TTBKEY = process.env.TTBKEY;
   do {
