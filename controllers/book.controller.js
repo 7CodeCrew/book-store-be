@@ -155,7 +155,6 @@ bookController.getBooksByGroup = async (req, res) => {
   try {
     const queryType = req.params.queryType;
     const categoryQuery = req.query.query.categoryQuery;
-    console.log(categoryQuery);
 
     let query = { queryType: queryType };
 
