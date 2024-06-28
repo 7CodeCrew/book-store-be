@@ -154,7 +154,17 @@ bookController.getBookDetailById = async (req, res) => {
 bookController.getBooksByGroup = async (req, res) => {
   try {
     const queryType = req.params.queryType;
-    const books = await Book.find({ queryType: queryType });
+    const categoryQuery = req.query.query.categoryQuery;
+
+    let query = { queryType: queryType };
+
+    // categoryQuery가 존재하면 카테고리 경로를 쿼리에 추가
+    if (categoryQuery) {
+      // categoryName 필드가 categoryPath 배열의 요소들을 포함하는 문서들을 찾음
+      query.categoryName = { $regex: categoryQuery, $options: 'i' };
+    }
+    // MongoDB에서 책들을 찾음
+    const books = await Book.find(query);
 
     return res.status(200).json({ status: 'success', books });
   } catch (err) {
