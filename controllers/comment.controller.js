@@ -64,4 +64,18 @@ commentController.deleteComment = async (req, res) => {
   }
 };
 
+commentController.getMyComment = async (req, res) => {
+  try {
+    const { userId } = req;
+    const condition = { userId, isDeleted: false };
+    const comment = await Comment.find(condition).populate({
+      path: 'bookId',
+      models: 'Book',
+    });
+    res.status(200).json({ status: 'success', comment });
+  } catch (err) {
+    res.status(400).json({ status: 'fail', error: err.message });
+  }
+};
+
 module.exports = commentController;
