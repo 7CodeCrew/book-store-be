@@ -166,8 +166,6 @@ bookController.getBooksByGroup = async (req, res) => {
     }
     // MongoDB에서 책들을 찾음
     const books = await Book.find(query);
-    console.log(books);
-    console.log(query);
 
     return res.status(200).json({ status: 'success', books });
   } catch (err) {
