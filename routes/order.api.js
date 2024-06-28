@@ -13,8 +13,4 @@ router.get('/request', authController.authenticate, orderController.getRequestLi
 router.get('/request/me', authController.authenticate, orderController.getMyRequest);
 router.put('/request/:id', authController.authenticate, orderController.updateRequest); // 어드민 권한 추가
 
-// router.post('/', orderController.createOrder);
-// router.get('/', orderController.getOrderList);
-// router.put('/:id', orderController.updateOrder);
-
 module.exports = router;

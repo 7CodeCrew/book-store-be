@@ -107,7 +107,17 @@ orderController.getRequestList = async (req, res) => {
         $lte: new Date(endDate),
       };
     }
-    const requests = await Order.find(condition);
+    const requests = await Order.find(condition)
+      .populate('userId')
+      .populate({
+        path: 'items',
+        populate: {
+          path: 'bookId',
+          model: 'Book',
+          select: 'title',
+        },
+      });
+    // const requests = await Order.find(condition);
     res.status(200).json({ status: 'success', requests });
   } catch (err) {
     res.status(400).json({ status: 'fail', error: err.message });
