@@ -35,7 +35,7 @@ bookController.getAllBooks = async (req, res) => {
       {
         $group: {
           _id: '$isbn',
-          docs: { $push: '$$ROOT' },
+          docs: { $first: '$$ROOT' },
           count: { $sum: 1 },
         },
       },
@@ -132,8 +132,10 @@ bookController.getBookDetailById = async (req, res) => {
 
     // 작가 이름을 기반으로 작가를 찾고, 작가의 다른 책들을 가져옴
     const authorNames = book.author;
+    const bookIsbn = book.isbn;
     const authorBooks = await Book.find({
       author: { $in: authorNames },
+      isbn: { $ne: bookIsbn },
       _id: { $ne: id },
     });
 
