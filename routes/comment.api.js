@@ -12,4 +12,6 @@ router.get('/book/:bookId', commentController.getCommentsByBook);
 // 댓글 삭제
 router.delete('/:id', authController.authenticate, commentController.deleteComment);
 
+router.get('/', authController.authenticate, commentController.getMyComment);
+
 module.exports = router;
