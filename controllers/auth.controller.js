@@ -247,7 +247,7 @@ authController.authenticate = async (req, res, next) => {
     const token = tokenString.replace('Bearer ', '');
     jwt.verify(token, JWT_SECRET_KEY, (error, payload) => {
       if (error) {
-        return res.status(401).json({ status: 'fail', message: 'Invalid token' });
+        return res.status(401).json({ status: 'fail', message: '로그인이 필요합니다!' });
       }
       req.userId = payload._id;
       next();
